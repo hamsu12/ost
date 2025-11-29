@@ -28,4 +28,12 @@ public class User {
     public String getSpotifyId() { return spotifyId; }
     public String getDisplayName() { return displayName; }
     public String getProfileImage() { return profileImage; }
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public void setProfileImage(String profileImage) {
+        this.profileImage = profileImage;
+    }
+
 }
