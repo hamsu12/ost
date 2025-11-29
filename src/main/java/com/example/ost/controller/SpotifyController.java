@@ -17,4 +17,10 @@ public class SpotifyController {
     public String search(@RequestParam String q) {
         return api.search(q);
     }
+
+    @GetMapping("/top-tracks")
+    public Object getTopTracks() {
+        return api.getTopTracks();
+    }
+
 }

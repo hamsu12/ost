@@ -5,12 +5,14 @@ public class SpotifyTrackInfoDto {
     private final String name;
     private final String artistName;
     private final String albumName;
+    private final String imageUrl;
 
-    public SpotifyTrackInfoDto(String id, String name, String artistName, String albumName) {
+    public SpotifyTrackInfoDto(String id, String name, String artistName, String albumName, String imageUrl) {
         this.id = id;
         this.name = name;
         this.artistName = artistName;
         this.albumName = albumName;
+        this.imageUrl = imageUrl;
     }
 
     public String getId() {
@@ -28,4 +30,5 @@ public class SpotifyTrackInfoDto {
     public String getAlbumName() {
         return albumName;
     }
+    public String getImageUrl() { return imageUrl; }
 }

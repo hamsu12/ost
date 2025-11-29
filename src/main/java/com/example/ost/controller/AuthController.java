@@ -1,12 +1,16 @@
 package com.example.ost.controller;
 
 import com.example.ost.service.SpotifyAuthService;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.http.ResponseEntity;
+import java.util.Map;
 
-@Controller
+@RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     private final SpotifyAuthService authService;
@@ -15,23 +19,16 @@ public class AuthController {
         this.authService = authService;
     }
 
-    @GetMapping("/auth/login")
+    @GetMapping("/login")
     public String login() {
-        String url = authService.loginUrl();
-        return "redirect:" + url;
+        return authService.loginUrl(); // 프론트에서 직접 요청하면 URL만 줌
     }
 
-    @GetMapping("/auth/callback")
-    @ResponseBody
-    public String callback(@RequestParam String code) {
-        System.out.println(">>> /auth/callback called, code = " + code);
-
+    @PostMapping("/callback")
+    public ResponseEntity<String> callback(@RequestBody Map<String, String> body) {
+        String code = body.get("code");
         authService.requestToken(code);
-
-        System.out.println(">>> /auth/callback finished");
-
-        return "Success! Spotify Login Completed";
+        return ResponseEntity.ok("success");
     }
-
-
 }
+

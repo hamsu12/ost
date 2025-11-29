@@ -24,7 +24,10 @@ public class SpotifyApiClient {
         this.spotifyConfig = spotifyConfig;
     }
 
-    private String getAccessToken() {
+    /**
+     * ✔ Client Credentials 방식 토큰 발급
+     */
+    public String getAccessToken() {
         String clientId = spotifyConfig.getClientId();
         String clientSecret = spotifyConfig.getClientSecret();
 
@@ -48,6 +51,10 @@ public class SpotifyApiClient {
         return response.getBody().get("access_token").toString();
     }
 
+
+    /**
+     * ✔ 단일 트랙 조회
+     */
     public SpotifyTrackInfoDto getTrackInfo(String trackId) {
         String accessToken = getAccessToken();
 
@@ -67,13 +74,20 @@ public class SpotifyApiClient {
             JsonNode root = objectMapper.readTree(response.getBody());
 
             String name = root.get("name").asText();
-            String artist = root.get("artists").get(0).get("name").asText();
-            String album = root.get("album").get("name").asText();
+            String artistName = root.get("artists").get(0).get("name").asText();
+            String albumName = root.get("album").get("name").asText();
 
-            return new SpotifyTrackInfoDto(trackId, name, artist, album);
+            JsonNode images = root.get("album").get("images");
+            String imageUrl = null;
+
+            if (images != null && images.size() > 0) {
+                imageUrl = images.get(0).get("url").asText();
+            }
+
+            return new SpotifyTrackInfoDto(trackId, name, artistName, albumName, imageUrl);
 
         } catch (Exception e) {
-            return new SpotifyTrackInfoDto(trackId, "Unknown", "Unknown", "Unknown");
+            return new SpotifyTrackInfoDto(trackId, "Unknown", "Unknown", "Unknown", null);
         }
     }
 }

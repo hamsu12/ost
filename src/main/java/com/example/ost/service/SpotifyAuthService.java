@@ -46,6 +46,7 @@ public class SpotifyAuthService {
     public void requestToken(String code) {
         System.out.println(">>> requestToken called, code = " + code);
 
+        System.out.println("BACKEND REDIRECT_URI = " + config.getRedirectUri());
         String url = "https://accounts.spotify.com/api/token";
 
         String body = "grant_type=authorization_code"
