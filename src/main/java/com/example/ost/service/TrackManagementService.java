@@ -1,52 +1,71 @@
 package com.example.ost.service;
 
-import org.springframework.http.*;
+import com.example.ost.domain.track.LikedTrack;
+import com.example.ost.repository.LikedTrackRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 public class TrackManagementService {
 
-    private final SpotifyAuthService authService;
-    private final RestTemplate rest = new RestTemplate();
+    private final LikedTrackRepository likedTrackRepository;
 
-    public TrackManagementService(SpotifyAuthService authService) {
-        this.authService = authService;
+    public TrackManagementService(LikedTrackRepository likedTrackRepository) {
+        this.likedTrackRepository = likedTrackRepository;
     }
 
-    // 좋아요 (Saved Track)
-    public void saveTrack(String trackId) {
-        String url = "https://api.spotify.com/v1/me/tracks?ids=" + trackId;
+    @Transactional
+    public void saveTrack(String spotifyTrackId) {
+        if (likedTrackRepository.existsBySpotifyTrackId(spotifyTrackId)) {
+            return;
+        }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + authService.getToken());
-
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        rest.exchange(url, HttpMethod.PUT, entity, Void.class);
+        LikedTrack track = new LikedTrack(spotifyTrackId); // 1개짜리 생성자 사용
+        likedTrackRepository.save(track);
     }
 
-    // 좋아요 취소
-    public void removeTrack(String trackId) {
-        String url = "https://api.spotify.com/v1/me/tracks?ids=" + trackId;
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + authService.getToken());
-
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        rest.exchange(url, HttpMethod.DELETE, entity, Void.class);
+    /**
+     * 좋아요 취소
+     */
+    @Transactional
+    public void removeTrack(String spotifyTrackId) {
+        likedTrackRepository.deleteBySpotifyTrackId(spotifyTrackId);
     }
 
-    // 좋아요 목록 조회
-    public String getLikedTracks() {
-        String url = "https://api.spotify.com/v1/me/tracks?limit=20";
+    /**
+     * 좋아요 전체 목록
+     */
+    @Transactional(readOnly = true)
+    public List<LikedTrack> getLikedTracks() {
+        return likedTrackRepository.findAll();
+    }
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.set("Authorization", "Bearer " + authService.getToken());
+    /**
+     * 같은 아티스트끼리 묶기
+     * key: artistName, value: 그 가수 곡 리스트
+     */
+    @Transactional(readOnly = true)
+    public Map<String, List<LikedTrack>> groupByArtist() {
+        List<LikedTrack> tracks = likedTrackRepository.findAll();
+        return tracks.stream()
+                .collect(Collectors.groupingBy(LikedTrack::getArtistName));
+    }
 
-        HttpEntity<Void> entity = new HttpEntity<>(headers);
-
-        return rest.exchange(url, HttpMethod.GET, entity, String.class).getBody();
+    /**
+     * 좋아요 누른 날짜별로 묶기
+     * key: LocalDate(YYYY-MM-DD), value: 그날 좋아요한 곡 리스트
+     */
+    @Transactional(readOnly = true)
+    public Map<LocalDate, List<LikedTrack>> groupByDate() {
+        List<LikedTrack> tracks = likedTrackRepository.findAll();
+        return tracks.stream()
+                .collect(Collectors.groupingBy(t -> t.getLikedAt().toLocalDate()));
     }
 }

@@ -1,7 +1,7 @@
 package com.example.ost.service;
 
+import com.example.ost.domain.track.LikedTrack;
 import com.example.ost.model.Comment;
-import com.example.ost.model.LikedTrack;
 import com.example.ost.repository.CommentRepository;
 import com.example.ost.repository.LikedTrackRepository;
 import org.springframework.stereotype.Service;
