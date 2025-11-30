@@ -23,4 +23,9 @@ public class SpotifyController {
         return api.getTopTracks();
     }
 
+    @GetMapping("/preview")
+    public String getPreview(@RequestParam String trackId) {
+        return api.getPreviewUrl(trackId);
+    }
+
 }

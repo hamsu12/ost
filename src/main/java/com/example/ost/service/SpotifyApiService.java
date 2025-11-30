@@ -47,7 +47,6 @@ public class SpotifyApiService {
         HttpEntity<Void> request = new HttpEntity<>(headers);
 
         try {
-            // year:2024 기준으로 최신 트랙 20개
             String url =
                     "https://api.spotify.com/v1/search" +
                             "?q=year:2024" +
@@ -81,7 +80,6 @@ public class SpotifyApiService {
                         ? images.get(0).get("url").asText()
                         : null;
 
-                // DTO 필드: id, name, artistName, albumName, imageUrl
                 result.add(new SpotifyTrackInfoDto(id, name, artistName, albumName, imageUrl));
             }
 
@@ -92,4 +90,39 @@ public class SpotifyApiService {
             return List.of();
         }
     }
+
+    public String getPreviewUrl(String trackId) {
+
+        String accessToken = apiClient.getAccessToken();
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + accessToken);
+
+        String url = "https://api.spotify.com/v1/tracks/" + trackId;
+
+        try {
+            ResponseEntity<String> response = restTemplate.exchange(
+                    url,
+                    HttpMethod.GET,
+                    new HttpEntity<>(headers),
+                    String.class
+            );
+
+            JsonNode root = objectMapper.readTree(response.getBody());
+            JsonNode preview = root.get("preview_url");
+
+
+            if (preview == null || preview.isNull()) {
+                return null;
+            }
+
+            return preview.asText();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+
 }
