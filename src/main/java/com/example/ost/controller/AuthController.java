@@ -32,6 +32,7 @@ public class AuthController {
         Map<String, Object> result = new HashMap<>();
         result.put("nickname", user.getDisplayName());
         result.put("profileImage", user.getProfileImage());
+        result.put("spotifyId", user.getSpotifyId());
 
         return result;
     }
