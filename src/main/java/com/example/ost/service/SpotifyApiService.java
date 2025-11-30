@@ -28,7 +28,7 @@ public class SpotifyApiService {
         HttpHeaders headers = new HttpHeaders();
         headers.set("Authorization", "Bearer " + accessToken);
 
-        String url = "https://api.spotify.com/v1/search?q=" + q + "&type=track&limit=10";
+        String url = "https://api.spotify.com/v1/search?q=" + q + "&type=track&limit=50";
 
         return restTemplate.exchange(
                 url,
