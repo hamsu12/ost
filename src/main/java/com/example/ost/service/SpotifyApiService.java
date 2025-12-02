@@ -123,6 +123,23 @@ public class SpotifyApiService {
             return null;
         }
     }
+    private HttpHeaders createAuthHeaders() {
+        HttpHeaders headers = new HttpHeaders();
+        headers.set("Authorization", "Bearer " + apiClient.getAccessToken());
+        return headers;
+    }
+    public Object getTrackDetail(String trackId) {
+        String url = "https://api.spotify.com/v1/tracks/" + trackId;
+
+        return restTemplate.exchange(
+                url,
+                HttpMethod.GET,
+                new HttpEntity<>(createAuthHeaders()),
+                Object.class
+        ).getBody();
+    }
+
+
 
 
 }

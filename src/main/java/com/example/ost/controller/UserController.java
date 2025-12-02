@@ -22,4 +22,11 @@ public class UserController {
     ) {
         return service.registerOrLogin(spotifyId, name, image);
     }
+
+    @DeleteMapping("/delete")
+    public String deleteUser(@RequestParam Long userId) {
+        service.deleteUser(userId);
+        return "deleted";
+    }
+
 }

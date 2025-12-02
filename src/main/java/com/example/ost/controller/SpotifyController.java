@@ -27,5 +27,10 @@ public class SpotifyController {
     public String getPreview(@RequestParam String trackId) {
         return api.getPreviewUrl(trackId);
     }
+    @GetMapping("/track/{trackId}")
+    public Object getTrackDetail(@PathVariable String trackId) {
+        return api.getTrackDetail(trackId);
+    }
+
 
 }

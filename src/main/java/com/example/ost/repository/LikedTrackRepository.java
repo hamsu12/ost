@@ -14,4 +14,5 @@ public interface LikedTrackRepository extends JpaRepository<LikedTrack, Long> {
     List<LikedTrack> findAllByUser(User user);
 
     boolean existsByUserAndSpotifyTrackId(User user, String spotifyTrackId);
+    void deleteAllByUser(User user);
 }
