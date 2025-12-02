@@ -26,7 +26,7 @@ public class Playlist {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.MERGE, CascadeType.PERSIST, CascadeType.REMOVE })
     @JoinTable(
             name="playlist_tracks",
             joinColumns=@JoinColumn(name="playlist_id"),
